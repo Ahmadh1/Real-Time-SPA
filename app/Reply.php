@@ -1,7 +1,7 @@
 <?php
 
 namespace App;
-
+use Auth;
 use App\User;
 use App\Question;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +10,12 @@ class Reply extends Model
 {
     protected $guarded = [];
 
+    protected static function boot() {
+        parent::boot();
+        static::creating(function($reply){
+            $reply->user_id = Auth::id();
+        });
+    }
     /**
      * Reply belongs to Question.
      *

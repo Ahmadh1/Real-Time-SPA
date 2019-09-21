@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Category;
-use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
+use App\Http\Requests\CategoryRequest;
+use App\Http\Resources\CategoryResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
@@ -30,12 +31,12 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) {
+    public function store(CategoryRequest $request) {
         $cat = new Category;
         $cat->title = $request->title;
         $cat->slug = str_slug($request->title);
         $cat->save();
-        return response('Category created', Response::HTTP_CREATED);
+        return response(new CategoryResource($cat), Response::HTTP_CREATED);
     }
 
     /**
@@ -62,7 +63,7 @@ class CategoryController extends Controller
             'title'  => $request->title,
             'slug'  => str_slug($request->title),
         ]);
-        return response('Updated', Response::HTTP_ACCEPTED);
+        return response(new CategoryResource($category), Response::HTTP_ACCEPTED);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\ReplyResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuestionResource extends JsonResource
@@ -17,10 +18,12 @@ class QuestionResource extends JsonResource
             'title' =>  $this->title,
             'slug' =>  $this->slug,
             'path'  =>  $this->path,
+            'replies'   =>  ReplyResource::collection($this->replies),
+            'replies_count'   =>  $this->replies->count(),
             'body'  =>  $this->body,
             'created_at'    =>  $this->created_at->diffForHumans(),
             'user' => $this->user->name,
-            'user_id' => $this->user_id,
+            'user_id' => $this->user_id
         ];
     }
 }

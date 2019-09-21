@@ -35,7 +35,7 @@
 		},
 		created() {
 			if (User.loggedIn()) {
-				this.$router.push({name:'index'})
+				this.$router.push({name:'home'})
 			}
 		},
 		methods: {

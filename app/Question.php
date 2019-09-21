@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     protected $fillable = ['title', 'slug', 'body', 'user_id', 'category_id'];
-
+    protected $with = ['replies'];
     protected static function boot() {
         parent::boot();
 
@@ -40,7 +40,7 @@ class Question extends Model
      */
     public function replies() {
     	// hasMany(RelatedModel, foreignKeyOnRelatedModel = question_id, localKey = id)
-    	return $this->hasMany(Reply::class);
+    	return $this->hasMany(Reply::class)->orderBy('id', 'desc');
     } // end replies
 
     /**

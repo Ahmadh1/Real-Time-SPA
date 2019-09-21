@@ -7,19 +7,22 @@
 			:data=question
 			></question>
 		</div>
-		<div class="col-4 bg-info">4</div>
+		<div class="col-4">
+			<sidebar></sidebar>
+		</div>
 	</div>
 </template>
 
 <script>
 import question from './Question'
+import sidebar from './Sidebar'
 export default {
 	data() {
 		return {
 			questions: null
 		}
 	},
-  components: {question},
+  components: {question, sidebar},
   created() {
   	axios.get('/api/question')
   	.then(res => {

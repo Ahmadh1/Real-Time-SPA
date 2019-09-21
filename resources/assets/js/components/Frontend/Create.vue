@@ -18,7 +18,7 @@
 						</div>
 						<div class="form-group">
 							<label for="body">Description:</label>
-							<textarea v-model="form.body" id="body" rows="5" class="form-control" placeholder="Body goes here..."></textarea>
+							<vue-simplemde v-model="form.body" />
 							<span class="text-danger" v-if="errors.body">{{ errors.body[0] }}</span>
 						</div>
 						<div class="form-group">

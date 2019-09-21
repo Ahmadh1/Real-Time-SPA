@@ -4,11 +4,11 @@
 			<span class="float-right text-muted">Asked by: {{ question.user }} | {{ question.created_at }}</span>
 		</div>
 		<div class="card-body">
-			<p v-html="question.body"></p>
+			<p v-html="body"></p>
 		</div>
 		<div>
 			<div class="card-footer">
-				<span>5 <i class="fas fa-comment-dots"></i></span>
+				<span class="badge badge-pill badge-dark">{{ question.replies_count }} <i class="fa fa-reply"></i></span>
 				<span class="float-right" v-if="own">
 					<button class="btn btn-sm btn-outline-primary"><i class="fas fa-pen" @click="edit"></i></button>
 					<button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash" @click="destroy"></i></button>
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import md from 'marked'
 export default {
 	data() {
 		return {
@@ -26,6 +27,11 @@ export default {
 		}
 	},
 	props: ['question'],
+	computed: {
+		body() {
+			return md.parse(this.question.body);
+		}
+	},
 	methods: {
 		destroy() {
 			axios.delete(`/api/question/${this.question.slug}`)

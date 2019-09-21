@@ -15,7 +15,7 @@ class User {
 		const username = res.data.user
 		if (Token.isValid(access_token)) {
 			AppStorage.store(access_token, username)
-			window.location = '/index';
+			window.location = '/home';
 		}
 	}
 
@@ -33,7 +33,7 @@ class User {
 
 	logout() {
 		AppStorage.clear();
-		window.location = '/index';
+		window.location = '/home';
 	}
 
 	name() {
@@ -49,6 +49,10 @@ class User {
 
 	own(id) {
 		return this.id() == id
+	}
+
+	admin() {
+		return this.id() == 13
 	}
 } // end User
 

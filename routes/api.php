@@ -1,4 +1,6 @@
 <?php
+Route::post('notifications', 'NotificationController@index');
+Route::post('/markAsRead', 'NotificationController@markAsRead');
 // Auth Routes
 Route::group(['prefix' => 'auth'], function() {
     Route::post('signup', 'AuthController@signup');

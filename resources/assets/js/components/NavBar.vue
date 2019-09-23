@@ -17,17 +17,8 @@
 		      	{{ item.title }}
 		      </router-link>
 		      </li>
-		      <!-- <li class="nav-item dropdown">
-		        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		           <i class="far fa-bell"></i>
-		        </a>
-		        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-		          <a class="dropdown-item" href="#">Action</a>
-		          <a class="dropdown-item" href="#">Another action</a>
-		          <div class="dropdown-divider"></div>
-		          <a class="dropdown-item" href="#">Something else here</a>
-		        </div>
-		      </li> -->
+		      <!-- notification goes here -->
+				<notify v-if="loggedIn"></notify>
 		    </ul>
 		  </div>
 		</nav>
@@ -35,9 +26,11 @@
 </template>
 
 <script>
+import notify from './Notify'
 	export default {
 		data() {
 			return {
+				loggedIn: User.loggedIn(),
 				items: [
 					{title: 'Forum', to: '/home', show: true},
 					{title: 'Ask Question', to: '/create', show: User.loggedIn()},
@@ -47,6 +40,7 @@
 				]
 			}
 		},
+		components: {notify},
 		created() {
 			EventBus.$on('logout', () =>{
 				 User.logout();

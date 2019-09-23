@@ -7,15 +7,20 @@
 			<span class="float-right text-muted">Asked by {{ data.user }} | {{ data.created_at }}</span>
 		</div>
 		<div class="card-body">
-			<p v-html="data.body">
+			<p v-html="body">
 			</p>
 		</div>
 	</div>
 </template>
 
 <script>
-
+import md from 'marked'
 export default {
-	props: ['data']
+	props: ['data'],
+	computed: {
+		body() {
+			return md.parse(this.data.body);
+		}
+	}
 }
 </script>

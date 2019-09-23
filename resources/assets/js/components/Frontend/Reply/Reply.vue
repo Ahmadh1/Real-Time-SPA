@@ -3,8 +3,9 @@
 		<div class="card-header">
 			<span>
 				<b>{{ child.user }}</b>
-				<p class="float-right text-muted"> replied {{ child.created_at }}</p>
+				<p class="text-muted"> replied {{ child.created_at }}</p>
 			</span>
+			<like :content = child></like>
 		</div>
 		<div class="card-body">
 			<edit-reply 
@@ -19,7 +20,7 @@
 					<button class="btn btn-sm btn-outline-dark" @click="edit">
 						<i class="fas fa-pen"></i>
 					</button>
-					<button class="btn btn-outline-danger btn-sm"><i class="fa fa-trash" @click="destroy"></i></button>
+					<button class="btn btn-outline-danger btn-sm" @click="destroy"><i class="fa fa-trash"></i></button>
 				</div>
 			</div>
 		</div>
@@ -29,6 +30,7 @@
 <script>
 	import md from 'marked'
 	import editReply from './EditReply'
+	import like from '../Likes/Like'
 	export default {
 		data() {
 			return {
@@ -38,7 +40,7 @@
 		created() {
 			this.listen();
 		},
-		components: {editReply},
+		components: {editReply, like},
 		  props: ['child', 'index'],
 		  computed: {
 		  	own() {

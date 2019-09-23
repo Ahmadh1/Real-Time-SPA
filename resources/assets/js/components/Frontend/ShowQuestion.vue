@@ -36,7 +36,7 @@ export default {
 		destroy() {
 			axios.delete(`/api/question/${this.question.slug}`)
 				.then((res) => {
-					this.$router.push('/index')
+					this.$router.push('/home')
 				})
 				.catch((err) => {
 					console.log(err.response.errors)

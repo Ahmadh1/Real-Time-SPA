@@ -8,10 +8,13 @@
 		</div>
 		<div>
 			<div class="card-footer">
-				<span class="badge badge-pill badge-dark">{{ question.replies_count }} <i class="fa fa-reply"></i></span>
+				<span class="badge badge-pill badge-dark">{{ replyCount }} <i class="fa fa-reply"></i></span>
 				<span class="float-right" v-if="own">
 					<button class="btn btn-sm btn-outline-primary"><i class="fas fa-pen" @click="edit"></i></button>
 					<button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash" @click="destroy"></i></button>
+				</span>
+				<span class="float-right" v-else>
+					<router-link to="/home" title="Go Back" class="text-danger"><i class="fas fa-arrow-left"></i> Go Back</router-link>
 				</span>
 			</div>
 		</div>
@@ -23,7 +26,8 @@ import md from 'marked'
 export default {
 	data() {
 		return {
-			own: User.own(this.question.user_id)
+			own: User.own(this.question.user_id),
+			replyCount: this.question.replies_count
 		}
 	},
 	props: ['question'],
@@ -31,6 +35,25 @@ export default {
 		body() {
 			return md.parse(this.question.body);
 		}
+	},
+	created() {
+		EventBus.$on('newReply', () => {
+			this.replyCount++
+		});
+
+		Echo.private('App.User.' + User.id())
+		    .notification((notification) => {
+		        this.replyCount++
+		    });
+		
+		EventBus.$on('deleteReply', () => {
+			this.replyCount--
+		});
+
+		Echo.channel('deleteReplyChannel')
+            .listen('DeleteReplyEvent',(e) => {
+                this.replyCount--
+            })
 	},
 	methods: {
 		destroy() {

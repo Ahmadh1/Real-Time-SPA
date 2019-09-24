@@ -5,7 +5,7 @@ class User {
 	login(data) {
 		axios.post('/api/auth/login', data)
 			.then(res => this.resAfterLogin(res))
-			.catch(err => {
+			.catch((err) => {
 				console.log(err)
 			})
 	}
@@ -22,7 +22,7 @@ class User {
 	hasToken() {
 		const storedToken = AppStorage.getToken();
 		if (storedToken) {
-			return Token.isValid(storedToken) ? true : false
+			return Token.isValid(storedToken) ? true : this.logout()
 		}
 		return false
 	}

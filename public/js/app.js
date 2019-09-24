@@ -2320,6 +2320,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2340,6 +2348,11 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.listen();
     this.fetchQuestion();
+  },
+  computed: {
+    loggedIn: function loggedIn() {
+      return User.loggedIn();
+    }
   },
   methods: {
     listen: function listen() {
@@ -2636,11 +2649,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      own: User.own(this.question.user_id)
+      own: User.own(this.question.user_id),
+      replyCount: this.question.replies_count
     };
   },
   props: ['question'],
@@ -2649,12 +2666,28 @@ __webpack_require__.r(__webpack_exports__);
       return marked__WEBPACK_IMPORTED_MODULE_0___default.a.parse(this.question.body);
     }
   },
+  created: function created() {
+    var _this = this;
+
+    EventBus.$on('newReply', function () {
+      _this.replyCount++;
+    });
+    Echo["private"]('App.User.' + User.id()).notification(function (notification) {
+      _this.replyCount++;
+    });
+    EventBus.$on('deleteReply', function () {
+      _this.replyCount--;
+    });
+    Echo.channel('deleteReplyChannel').listen('DeleteReplyEvent', function (e) {
+      _this.replyCount--;
+    });
+  },
   methods: {
     destroy: function destroy() {
-      var _this = this;
+      var _this2 = this;
 
       axios["delete"]("/api/question/".concat(this.question.slug)).then(function (res) {
-        _this.$router.push('/home');
+        _this2.$router.push('/home');
       })["catch"](function (err) {
         console.log(err.response.errors);
       });
@@ -2844,6 +2877,8 @@ __webpack_require__.r(__webpack_exports__);
         _this2.read = res.data.read;
         _this2.unread = res.data.unread;
         _this2.unreadCount = res.data.unread.length;
+      })["catch"](function (err) {
+        Exception.handle(err);
       });
     },
     readIt: function readIt(notification) {
@@ -67182,7 +67217,27 @@ var render = function() {
               _vm._v(" "),
               _c("replies", { attrs: { question: _vm.question } }),
               _vm._v(" "),
-              _c("create-reply", { attrs: { questionSlug: _vm.question.slug } })
+              _vm.loggedIn
+                ? _c("create-reply", {
+                    attrs: { questionSlug: _vm.question.slug }
+                  })
+                : _c("div", { staticClass: "card mt-5" }, [
+                    _c(
+                      "div",
+                      { staticClass: "card-body" },
+                      [
+                        _c(
+                          "router-link",
+                          {
+                            staticClass: "text-danger text-uppercase",
+                            attrs: { to: "/login" }
+                          },
+                          [_vm._v("Click here to Login")]
+                        )
+                      ],
+                      1
+                    )
+                  ])
             ],
             1
           )
@@ -67477,7 +67532,7 @@ var render = function() {
     _c("div", [
       _c("div", { staticClass: "card-footer" }, [
         _c("span", { staticClass: "badge badge-pill badge-dark" }, [
-          _vm._v(_vm._s(_vm.question.replies_count) + " "),
+          _vm._v(_vm._s(_vm.replyCount) + " "),
           _c("i", { staticClass: "fa fa-reply" })
         ]),
         _vm._v(" "),
@@ -67494,7 +67549,24 @@ var render = function() {
                 })
               ])
             ])
-          : _vm._e()
+          : _c(
+              "span",
+              { staticClass: "float-right" },
+              [
+                _c(
+                  "router-link",
+                  {
+                    staticClass: "text-danger",
+                    attrs: { to: "/home", title: "Go Back" }
+                  },
+                  [
+                    _c("i", { staticClass: "fas fa-arrow-left" }),
+                    _vm._v(" Go Back")
+                  ]
+                )
+              ],
+              1
+            )
       ])
     ])
   ])
@@ -82933,6 +83005,55 @@ function () {
 
 /***/ }),
 
+/***/ "./resources/assets/js/Helpers/Exception.js":
+/*!**************************************************!*\
+  !*** ./resources/assets/js/Helpers/Exception.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./User */ "./resources/assets/js/Helpers/User.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Exception =
+/*#__PURE__*/
+function () {
+  function Exception() {
+    _classCallCheck(this, Exception);
+  }
+
+  _createClass(Exception, [{
+    key: "handle",
+    value: function handle(error) {
+      this.isExpired(error.response.data.error);
+    } // end
+
+  }, {
+    key: "isExpired",
+    value: function isExpired(error) {
+      if (error == 'Token is invalid') {
+        _User__WEBPACK_IMPORTED_MODULE_0__["default"].logout();
+      }
+    } // end
+
+  }]);
+
+  return Exception;
+}(); // end class
+
+
+/* harmony default export */ __webpack_exports__["default"] = (Exception = new Exception());
+
+/***/ }),
+
 /***/ "./resources/assets/js/Helpers/Token.js":
 /*!**********************************************!*\
   !*** ./resources/assets/js/Helpers/Token.js ***!
@@ -82962,21 +83083,41 @@ function () {
 
       if (payload) {
         return payload.iss == "http://localhost:8000/api/auth/login" || "http://localhost:8000/api/auth/signup" ? true : false;
-      }
+      } // end if
+
 
       return false;
-    }
+    } // end
+
   }, {
     key: "payload",
     value: function payload(token) {
       var payload = token.split('.')[1];
       return this.decode(payload);
-    }
+    } // end
+
   }, {
     key: "decode",
     value: function decode(payload) {
-      return JSON.parse(atob(payload));
-    }
+      if (this.isBase64(payload)) {
+        return JSON.parse(atob(payload));
+      } // end if
+
+
+      return false;
+    } // end
+
+  }, {
+    key: "isBase64",
+    value: function isBase64(payload) {
+      try {
+        // it's like btoa(2 + 2 = 4) => 4/2 == 2 + 2
+        return btoa(atob(payload)).replace(/=/g, "") == payload;
+      } catch (err) {
+        return false;
+      }
+    } // end
+
   }]);
 
   return Token;
@@ -83042,7 +83183,7 @@ function () {
       var storedToken = _AppStorage__WEBPACK_IMPORTED_MODULE_1__["default"].getToken();
 
       if (storedToken) {
-        return _Token__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken) ? true : false;
+        return _Token__WEBPACK_IMPORTED_MODULE_0__["default"].isValid(storedToken) ? true : this.logout();
       }
 
       return false;
@@ -83174,7 +83315,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_simplemde__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-simplemde */ "./node_modules/vue-simplemde/src/index.vue");
 /* harmony import */ var _Helpers_User__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Helpers/User */ "./resources/assets/js/Helpers/User.js");
-/* harmony import */ var _Router_router_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Router/router.js */ "./resources/assets/js/Router/router.js");
+/* harmony import */ var _Helpers_Exception__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Helpers/Exception */ "./resources/assets/js/Helpers/Exception.js");
+/* harmony import */ var _Router_router_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Router/router.js */ "./resources/assets/js/Router/router.js");
 __webpack_require__(/*! ./bootstrap */ "./resources/assets/js/bootstrap.js");
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
@@ -83183,13 +83325,14 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('vue-simplemde', vue_simplemde__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
 window.User = _Helpers_User__WEBPACK_IMPORTED_MODULE_2__["default"];
-console.log(_Helpers_User__WEBPACK_IMPORTED_MODULE_2__["default"].id());
+
+window.Exception = _Helpers_Exception__WEBPACK_IMPORTED_MODULE_3__["default"];
 window.EventBus = new vue__WEBPACK_IMPORTED_MODULE_0___default.a();
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('app-home', __webpack_require__(/*! ./components/AppHome.vue */ "./resources/assets/js/components/AppHome.vue")["default"]);
 
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
-  router: _Router_router_js__WEBPACK_IMPORTED_MODULE_3__["default"]
+  router: _Router_router_js__WEBPACK_IMPORTED_MODULE_4__["default"]
 });
 
 /***/ }),

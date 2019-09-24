@@ -11,7 +11,15 @@
 				v-else	
 				></show>
 				<replies :question=question></replies>
-				<create-reply :questionSlug = question.slug></create-reply>
+				<create-reply
+				v-if="loggedIn"
+				:questionSlug = question.slug>
+				 </create-reply>
+				 <div class="card mt-5" v-else>
+				 	<div class="card-body">
+				 		<router-link to="/login" class="text-danger text-uppercase">Click here to Login</router-link>
+				 	</div>
+				 </div>
 			</div>
 		</div>
 	</div>
@@ -33,6 +41,11 @@
 	  created() {
 	    this.listen()
 	    this.fetchQuestion()
+	  },
+	  computed: {
+	  	loggedIn() {
+	  		return User.loggedIn()
+	  	}
 	  },
 	  methods: {
 	  	listen() {

@@ -24,9 +24,9 @@ class AuthController extends Controller {
     public function login()
     {
         $credentials = request(['email', 'password']);
-
+        $errors = array('email' => 'Email field is required', 'password' => 'Password is required');
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'You are not in our system'], 404);
+            return response()->json($errors, 400);
         }
 
         return $this->respondWithToken($token);

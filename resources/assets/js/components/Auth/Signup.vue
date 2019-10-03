@@ -50,7 +50,7 @@
 		},
 		created() {
 			if (User.loggedIn()) {
-				this.$router.push({name:'home'})
+				this.$router.push({name:'forum'})
 			}
 		},
 		methods: {
@@ -59,7 +59,7 @@
 				axios.post('/api/auth/signup', this.form)
 					.then(res => {
 						User.resAfterLogin(res)
-						this.$router.push({name:'home'})
+						this.$router.push({name:'forum'})
 					})
 					.catch(err => {
 						this.errors = err.response.data.errors

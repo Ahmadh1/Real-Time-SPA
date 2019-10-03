@@ -22,7 +22,7 @@
 							<span class="text-danger" v-if="errors.body">{{ errors.body[0] }}</span>
 						</div>
 						<div class="form-group">
-							<button class="btn btn-success form-control">Ask Question</button>
+							<button :disabled="disabled" class="btn btn-success form-control">Ask Question</button>
 						</div>
 					</form>
 				</div>
@@ -42,6 +42,11 @@ export default {
 			},
 			categories: {},
 			errors: {}
+		}
+	},
+	computed: {
+		disabled() {
+			return !(this.form.title && this.form.body && this.form.category_id)
 		}
 	},
 	created() {

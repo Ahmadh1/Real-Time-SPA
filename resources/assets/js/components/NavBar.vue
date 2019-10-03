@@ -1,7 +1,7 @@
 <template>
 	<div class="mb-5">
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		  <router-link to="/home" class="navbar-brand">SPA Forum</router-link>
+		  <router-link to="/" class="navbar-brand">SPA Forum</router-link>
 		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		    <span class="navbar-toggler-icon"></span>
 		  </button>
@@ -32,7 +32,7 @@ import notify from './Notify'
 			return {
 				loggedIn: User.loggedIn(),
 				items: [
-					{title: 'Forum', to: '/home', show: true},
+					{title: 'Forum', to: '/forum', show: true},
 					{title: 'Ask Question', to: '/create', show: User.loggedIn()},
 					{title: 'Category', to: '/category', show: User.admin()},
 					{title: 'Login', to: '/login', show: !User.loggedIn()},

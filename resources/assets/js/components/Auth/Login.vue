@@ -14,7 +14,7 @@
 							<input type="password" id="password" v-model="form.password" class="form-control" placeholder="Enter Password">
 						</div>
 						<div class="form-group">
-							<button type="submit" class="btn btn-outline-success form-control">Login</button>
+							<button :disabled="disabled" type="submit" class="btn btn-dark form-control">Login</button>
 							<p class="mt-2">Don't have an account click<router-link to="/signup" class="text-danger">&nbsp;here...</router-link></p>
 						</div>
 					</form>
@@ -30,17 +30,23 @@
 				form:{
 					email: null,
 					password: null
-				}
+				},
+				errors: null
+			}
+		},
+		computed: {
+			disabled() {
+				return !(this.form.email && this.form.password)
 			}
 		},
 		created() {
 			if (User.loggedIn()) {
-				this.$router.push({name:'home'})
+				this.$router.push({name:'forum'})
 			}
 		},
 		methods: {
 			login() {
-				User.login(this.form)
+				User.login(this.form, this.errors)
 			}
 		}
 	}

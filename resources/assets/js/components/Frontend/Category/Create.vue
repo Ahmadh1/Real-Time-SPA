@@ -2,6 +2,10 @@
 	<div>
 	<div class="row mt-5 mb-5">
 		<div class="col-8 offset-2">
+			<div class="alert alert-danger" v-if="errors">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				{{ errors.title[0] }}
+			</div>
 			<div class="card">
 				<div class="card-header">Add new Category</div>
 				<div class="card-body">
@@ -11,8 +15,8 @@
 							<input type="text" id="title" v-model="form.title" class="form-control">
 						</div>
 						<div class="form-group">
-							<button class="btn btn-outline-primary form-control" type="submit" v-if="editSlug">Update</button>
-							<button class="btn btn-outline-danger form-control" type="submit" v-else>Create</button>
+							<button :disabled="disabled" class="btn btn-primary form-control" type="submit" v-if="editSlug">Update</button>
+							<button class="btn btn-danger form-control" :disabled="disabled" type="submit" v-else>Create</button>
 						</div>
 					</form>
 				</div>
@@ -38,9 +42,9 @@
 								<td>{{ cat.title }}</td>
 								<td>{{ cat.created_at }}</td>
 								<td>
-									<button class="btn btn-outline-dark btn-sm" @click="edit(index)"><i class="fa fa-pen"></i></button></td>
+									<button class="btn btn-dark btn-sm" @click="edit(index)"><i class="fa fa-pen"></i></button></td>
 								<td>
-									<button class="btn btn-outline-danger btn-sm" @click="destroy(cat.slug, index)"><i class="fa fa-trash"></i></button></td>
+									<button class="btn btn-danger btn-sm" @click="destroy(cat.slug, index)"><i class="fa fa-trash"></i></button></td>
 							</tr>
 						</tbody>
 					</table>
@@ -59,15 +63,22 @@ export default {
     		title:null
     	},
     	categories: {},
-    	editSlug: null
+    	editSlug: null,
+    	errors: null
     }
   },
+
   created () {
   	axios.get('/api/category')
   		.then((res) => {
   			this.categories = res.data.data
   		})
   },
+  computed: {
+		disabled() {
+			// return !(this.form.title)
+		}
+	},
   methods: {
   	submit() {
   		this.editSlug ? this.update() : this.create()
@@ -77,6 +88,9 @@ export default {
   			.then((res) => {
   				this.categories.unshift(res.data)
   				this.form.title = null
+  			})
+  			.catch((err) => {
+  				this.errors = err.response.data.errors
   			})
 	},
 	update() {

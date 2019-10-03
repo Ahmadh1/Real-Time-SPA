@@ -1,0 +1,30 @@
+body,html {
+  margin: 0; 
+  padding: 0;
+}
+
+/*Stile per effetto parallax*/
+.parallax {
+  /* Immagine di sfondo */
+  background-image: url("../img/digi art man.jpg");
+
+  /* Altezza Minima */
+  min-height: 500px;
+
+  /* Effetto Parallax */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/*Stile dei blocchi per creare contenuto*/
+.top-block {
+  min-height: 500px;
+  background: url("../img/wallhaven-694685.png");
+}
+
+.bottom-block {
+  min-height: 500px;
+  background: url("../img/wallhaven-191737.jpg");
+}
